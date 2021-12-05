@@ -1,0 +1,4 @@
+{
+    "dockerhub-id": "chinkevin/sleep_capstone:latest",
+    "build-script": "python run.py"
+}
