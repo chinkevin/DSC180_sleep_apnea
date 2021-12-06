@@ -1,1 +1,1 @@
-# DSC180-Methodology-5
+# DSC180 Capstone Project
