@@ -7,8 +7,8 @@ import json
 sys.path.insert(0, 'src')
 
 from eda import main_eda
-# from etl import get_data
-# from features import apply_features
+from data import data_setup
+from features import build_features
 
 # from model import model_build
 
@@ -25,22 +25,20 @@ def main(targets):
         with open('config/eda-params.json') as fh:
             data_cfg = json.load(fh)
 
-        # make the data target
-        data = main_eda(**data_cfg)
+        main_eda(**data_cfg)
 
 
-    # if 'data' in targets:
-    #     with open('config/data-params.json') as fh:
-    #         data_cfg = json.load(fh)
+    if 'data' in targets:
+        with open('config/data-params.json') as fh:
+            data_cfg = json.load(fh)
 
-    #     # make the data target
-    #     data = get_data(**data_cfg)
+        data_setup(**data_cfg)
 
-    # if 'features' in targets:
-    #     with open('config/features-params.json') as fh:
-    #         feats_cfg = json.load(fh)
+    if 'features' in targets:
+        with open('config/features-params.json') as fh:
+            feats_cfg = json.load(fh)
 
-    #     feats, labels = apply_features(data, **feats_cfg)
+        build_features(**feats_cfg)
 
     # if 'model' in targets:
     #     with open('config/model-params.json') as fh:
