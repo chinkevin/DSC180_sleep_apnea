@@ -6,7 +6,7 @@ import json
 
 sys.path.insert(0, 'src')
 
-from eda import main_eda
+# from eda import main_eda
 from data import data_setup
 from features import build_features
 
@@ -21,11 +21,11 @@ def main(targets):
     `main` runs the targets in order of data=>analysis=>model.
     '''
 
-    if 'eda' in targets:
-        with open('config/eda-params.json') as fh:
-            data_cfg = json.load(fh)
+    # if 'eda' in targets:
+    #     with open('config/eda-params.json') as fh:
+    #         data_cfg = json.load(fh)
 
-        main_eda(**data_cfg)
+    #     main_eda(**data_cfg)
 
 
     if 'data' in targets:

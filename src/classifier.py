@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import joblib
-from tqdm.notebook import tqdm
 from lightgbm import LGBMClassifier
 
 # Define hyper-parameters
@@ -59,7 +58,7 @@ features.to_csv("features.csv", index=False)
 params['n_jobs'] = 8
 
 # Loop across combs of predictors
-for name, X in tqdm(X_all.items()):
+for name, X in X_all.items():
     
     # Fit
     clf = LGBMClassifier(**params)
