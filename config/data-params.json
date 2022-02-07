@@ -1,6 +1,6 @@
 
 {
-    "out_dir": "./output/split/",
+    "out_dir": "output/demographics/",
     "desc_dir": "data/datasets/shhs2-dataset-0.17.0.csv",
     "usecols": ["nsrrid", "visitnumber", "gender", "age_s1", "overall_shhs2", 
         "race", "bmi_s2", "ahi_a0h3", "htnderv_s2"]

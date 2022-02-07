@@ -1,5 +1,5 @@
 {
-    "data_dir": "output/split/shhs_split.csv",
+    "data_dir": "output/demographics/shhs_demo.csv",
     "eeg_dir": "data/edfs/shhs2/",
     "hypno_dir": "data/annotations-events-profusion/shhs2/",
     "out_dir": "output/features/",

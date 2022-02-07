@@ -8,11 +8,11 @@ def data_setup(out_dir, desc_dir, usecols):
     # assert os.path.isdir(root_dir)
 
     # Define the output path
-    out_dir = 'output/split/'
+    # out_dir = 'output/split/'
     os.makedirs(out_dir, exist_ok = True)
     # desc_dir = 'data/datasets/shhs2-dataset-0.17.0.csv'
-    usecols = ['nsrrid', 'visitnumber', 'gender', 'age_s1', 'overall_shhs2', 
-               'race', 'bmi_s2', 'ahi_a0h3', 'htnderv_s2'] # diabetes is only in shh1?
+    # usecols = ['nsrrid', 'visitnumber', 'gender', 'age_s1', 'overall_shhs2', 
+    #            'race', 'bmi_s2', 'ahi_a0h3', 'htnderv_s2'] # diabetes is only in shh1?
 
     df_shhs = pd.read_csv(desc_dir, usecols=usecols, encoding='cp1252') # enconding to handle special characters
 
@@ -90,4 +90,4 @@ def data_setup(out_dir, desc_dir, usecols):
     df_shhs = df_shhs[cols_order]
 
     # Export to .csv
-    df_shhs.to_csv(out_dir + "shhs_split.csv", index=True)
+    df_shhs.to_csv(out_dir + "shhs_demo.csv", index=True)
