@@ -1,4 +1,7 @@
 {
-    "feats": ["CYLINDERS","ENGINESIZE"],
-    "outfile": "data/temp/features-simple.csv"
+    "data_dir": "output/split/shhs_split.csv",
+    "eeg_dir": "data/edfs/shhs2/",
+    "hypno_dir": "data/annotations-events-profusion/shhs2/",
+    "out_dir": "output/features/",
+    "include":["EEG", "EOG(L)", "EMG"]
 }
