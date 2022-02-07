@@ -47,17 +47,17 @@ def main(targets):
     #     # make the data target
     #     model_build(feats, labels, **model_cfg)
 
-    if 'test' in targets:
-    	with open('config/eda-params.json') as fh:
-            eda_cfg = json.load(fh)
+    # if 'test' in targets:
+    # 	with open('config/eda-params.json') as fh:
+    #         eda_cfg = json.load(fh)
 
-        	# make the data target
-    		# data = get_data(**test_cfg)
-        # move_data(**test_config)
-    	main_eda(**eda_cfg)
-        # convert_notebook(**eda_config)
-        # find_metrics(**tuning_config)
-        # create_launch_files(**generate_config)
+    #     	# make the data target
+    # 		# data = get_data(**test_cfg)
+    #     # move_data(**test_config)
+    # 	main_eda(**eda_cfg)
+    #     # convert_notebook(**eda_config)
+    #     # find_metrics(**tuning_config)
+    #     # create_launch_files(**generate_config)
 
     return
 
