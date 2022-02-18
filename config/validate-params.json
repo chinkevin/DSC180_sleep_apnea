@@ -3,5 +3,5 @@
     "eeg_dir": "data/polysomnography/edfs/shhs2/",
     "hypno_dir": "data/polysomnography/annotations-events-profusion/shhs2/",
     "out_dir": "output/features/",
-    "include":["EEG", "EOG(L)", "EMG"]
+    "w_dir":"output/cv"
 }

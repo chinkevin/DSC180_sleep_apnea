@@ -1,20 +1,8 @@
 {
-    "test_size": 0.30,
-    "nodes_in_first_layer": 64,
-    "nodes_in_second_layer": 32,
-    "nodes_in_third_layer": 32,
-    
-    "activation_first_layer": "relu",
-    "activation_second_layer": "relu",
-    "activation_third_layer": "relu",
-    "activation_output_layer": "linear",
-    
-    "optimizer": "adam",
-    "loss": "MSE",
-    
-    "batch_size": 32, 
-    "epochs": 10,
-    
-    "mdl_fp": "data/out/model.h5",
-    "predictions_fp": "data/out/preds.csv"
+    "data_dir": "output/demographics/shhs_demo.csv",
+    "eeg_dir": "data/polysomnography/edfs/shhs2/",
+    "hypno_dir": "data/polysomnography/annotations-events-profusion/shhs2/",
+    "out_dir": "output/classifiers/",
+    "feat_fp": "output/features/features_nsrr_shhs2.parquet",
+    "include":["EEG", "EOG(L)", "EMG"]
 }

@@ -9,8 +9,8 @@ sys.path.insert(0, 'src')
 # from eda import main_eda
 from data import data_setup
 from features import build_features
-
-# from model import model_build
+from model import build_model
+from predict import predict
 
 
 def main(targets):
@@ -40,9 +40,17 @@ def main(targets):
 
         build_features(**feats_cfg)
 
-    # if 'model' in targets:
-    #     with open('config/model-params.json') as fh:
-    #         model_cfg = json.load(fh)
+    if 'model' in targets:
+        with open('config/model-params.json') as fh:
+            model_cfg = json.load(fh)
+
+        build_model(**model_cfg)
+
+    if 'predict' in targets:
+        with open('config/predict-params.json') as fh:
+            predict_cfg = json.load(fh)
+
+        predict(**predict_cfg)
 
     #     # make the data target
     #     model_build(feats, labels, **model_cfg)
