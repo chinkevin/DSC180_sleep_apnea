@@ -45,24 +45,24 @@ def data_setup(out_dir, desc_dir, usecols):
 
     # # Define training / testing
     # # Keep only a random subset of 600 subjects for training to avoid dataset imbalance
-    # df_shhs["set"] = "excluded"
-    # idx_train = df_shhs.sample(n=600, replace=False, random_state=42).index
-    # idx_test = np.setdiff1d(df_shhs.index, idx_train)
-    # # Now we keep 100 random participants of ``idx_test`` for testing
-    # rs = np.random.RandomState(42)
-    # idx_test = rs.choice(idx_test, size=100, replace=False)
-    # df_shhs.loc[idx_train, "set"] = "training"
-    # df_shhs.loc[idx_test, "set"] = "testing"
+    df_shhs["set"] = "excluded"
+    idx_train = df_shhs.sample(n=600, replace=False, random_state=42).index
+    idx_test = np.setdiff1d(df_shhs.index, idx_train)
+    # Now we keep 100 random participants of ``idx_test`` for testing
+    rs = np.random.RandomState(42)
+    idx_test = rs.choice(idx_test, size=100, replace=False)
+    df_shhs.loc[idx_train, "set"] = "training"
+    df_shhs.loc[idx_test, "set"] = "testing"
 
 
     # ---- Test with 3 ----
-    df_shhs["set"] = "excluded"
-    idx_train = ['200077', '200078']
-    idx_test = ['200079']
-    # Now we keep 100 random participants of ``idx_test`` for testing
-    rs = np.random.RandomState(42)
-    df_shhs.loc[idx_train, "set"] = "training"
-    df_shhs.loc[idx_test, "set"] = "testing"
+    # df_shhs["set"] = "excluded"
+    # idx_train = ['200077', '200078']
+    # idx_test = ['200079']
+    # # Now we keep 100 random participants of ``idx_test`` for testing
+    # rs = np.random.RandomState(42)
+    # df_shhs.loc[idx_train, "set"] = "training"
+    # df_shhs.loc[idx_test, "set"] = "testing"
     # -------- end --------
 
     # Export demographics to CSV file
@@ -78,7 +78,7 @@ def data_setup(out_dir, desc_dir, usecols):
     # df_shhs = df_shhs.set_index("dataset", append=True).reorder_levels(["dataset", "subj"])
 
     # Remove "excluded"
-    df_shhs = df_shhs[df_shhs["set"] != "excluded"]
+    # df_shhs = df_shhs[df_shhs["set"] != "excluded"]
 
     df_shhs['hypertension'] = df_shhs['hypertension'].astype(float)
     df_shhs['hypertension'].value_counts(dropna=False)

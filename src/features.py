@@ -82,7 +82,7 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
     df = pd.concat(df)
 
     # Convert to category
-    df['stage'] = df['stage'].astype('category')
+    df['stage'] = df['stage'].astype('str')
     # Export
     os.makedirs(out_dir, exist_ok = True)
     df.to_parquet(out_dir + "features_nsrr_shhs2.parquet")
