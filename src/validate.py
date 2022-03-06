@@ -8,13 +8,11 @@ from helper_functions import NUM2STR, STR2NUM
 from helper_functions import mean_std, median_iqr, perc_transition
 
 def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir):
-    wdir = "output/cv"
-    wdir_demo = "output/demographics/"
 
     # Choose model (set in config) -------------------
     model = "eeg+eog+emg+demo"
 
-    df = pd.read_parquet(wdir + "/cv_loo_nsrr_shhs.parquet")
+    df = pd.read_parquet(w_dir + "/cv_loo_nsrr_shhs.parquet")
     df['subj'] = df['subj'].astype(str)
     df_demo = pd.read_csv(data_dir)
 
@@ -69,4 +67,6 @@ def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir):
     # Join with demographics
     df_scores = df_scores.join(df_demo, how="left")
 
-    df_scores.round(3)
+    # os.makedirs(w_dir + model, exist_ok = True)
+    # export to csv
+    df_scores.round(3).to_csv(w_dir + model + "/df_scores.csv")

@@ -11,7 +11,7 @@ from data import data_setup
 from features import build_features
 from model import build_model
 from predict import predict
-
+from validate import validate
 
 def main(targets):
     '''
@@ -51,6 +51,12 @@ def main(targets):
             predict_cfg = json.load(fh)
 
         predict(**predict_cfg)
+
+    if 'validate' in targets:
+        with open('config/validate-params.json') as fh:
+            validate_cfg = json.load(fh)
+
+        validate(**validate_cfg)
 
     #     # make the data target
     #     model_build(feats, labels, **model_cfg)
