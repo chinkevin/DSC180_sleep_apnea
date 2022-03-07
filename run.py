@@ -9,6 +9,7 @@ sys.path.insert(0, 'src')
 # from eda import main_eda
 from data import data_setup
 from features import build_features
+from features_with_ECG import build_features_ecg
 from model import build_model
 from predict import predict
 from validate import validate
@@ -39,6 +40,12 @@ def main(targets):
             feats_cfg = json.load(fh)
 
         build_features(**feats_cfg)
+
+    if 'features_ecg' in targets:
+        with open('config/features-params.json') as fh: # switched back to features
+            feats_cfg = json.load(fh)
+
+        build_features_ecg(**feats_cfg)
 
     if 'model' in targets:
         with open('config/model-params.json') as fh:

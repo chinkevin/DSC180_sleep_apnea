@@ -8,7 +8,7 @@ from preprocessing import crop_hypno, extract_features
 import mne
 import sleepecg
 
-def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
+def build_features_ecg(data_dir, eeg_dir, hypno_dir, out_dir, include):
     # Define paths (can be defined in config files)
     # eeg_dir = 'data/edfs/shhs2/'
     # hypno_dir = 'data/annotations-events-profusion/shhs2/'
@@ -45,13 +45,12 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
         # LOAD EEG DATA
         try:
             raw = read_raw_edf(eeg_file, preload=False, verbose=0)
-            raw.drop_channels(np.setdiff1d(raw.info['ch_names'], include))
+            raw.drop_channels(np.setdiff1d(raw.info['ch_names'], ["ECG"] + include))
             # Skip subjects if channel were not found
-            assert len(raw.ch_names) == len(include)
+            assert len(raw.ch_names) == 1+len(include)
             raw.load_data()
         except:
             continue
-        _, times = raw[:] 
         
         # Resample and high-pass filter 
         raw.resample(sf, npad="auto")
@@ -87,7 +86,7 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
         features = extract_features(df_subj, sub, raw, include)
         # Add hypnogram
         features['stage'] = df_hypno.to_numpy()
-        df.append(features)
+        # df.append(features)
 
         # extract ECG features
         heartbeat_times = sleepecg.detect_heartbeats(ecg, sf)/sf
@@ -134,9 +133,9 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
     df = pd.concat(df).set_index(['subj','epoch'])
 
     # Convert to category
-    df['stage'] = df['stage'].astype('category')
-    df = df[df['stage'].isin(['N1', 'N2', 'N3', 'R', 'W'])]
-    df.stage = df.stage.cat.remove_categories(9)
+    df['stage'] = df['stage'].astype('str')
+    # df = df[df['stage'].isin(['N1', 'N2', 'N3', 'R', 'W'])]
+    # df.stage = df.stage.cat.remove_categories(9)
     # Export
     os.makedirs(out_dir, exist_ok = True)
-    df.to_parquet(out_dir + "features_nsrr_shhs2.parquet")
+    df.to_parquet(out_dir + "features_ecg_nsrr_shhs2.parquet")

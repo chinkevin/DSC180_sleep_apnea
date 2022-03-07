@@ -2,7 +2,6 @@
     "data_dir": "output/demographics/shhs_demo.csv",
     "eeg_dir": "data/polysomnography/edfs/shhs2/",
     "hypno_dir": "data/polysomnography/annotations-events-profusion/shhs2/",
-    "out_dir": "output/classifiers/",
-    "feat_fp": "output/features/features_ecg_nsrr_shhs2.parquet",
-    "include":["EEG", "EOG(L)", "EMG"]
+    "out_dir": "output/features/",
+    "include":["EEG", "EOG(L)", "EMG", "ECG"]
 }
