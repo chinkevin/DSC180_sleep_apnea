@@ -10,7 +10,7 @@ from helper_functions import mean_std, median_iqr, perc_transition
 def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir):
 
     # Choose model (set in config) -------------------
-    model = "eeg+eog+emg+demo"
+    model = "eeg+eog+emg+ecg+demo"
 
     df = pd.read_parquet(w_dir + "/cv_loo_nsrr_shhs.parquet")
     df['subj'] = df['subj'].astype(str)
@@ -26,7 +26,7 @@ def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir):
         df_sub = df[df['subj'] == sub]
         yt = df_sub['y_true']
         yp = df_sub['y_pred']
-        n = yt.shape[0]
+        n = yt.shape[0] 
 
         sub_scores = {
             # Accuracy
@@ -67,6 +67,6 @@ def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir):
     # Join with demographics
     df_scores = df_scores.join(df_demo, how="left")
 
-    # os.makedirs(w_dir + model, exist_ok = True)
+    os.makedirs(w_dir + model, exist_ok = True)
     # export to csv
     df_scores.round(3).to_csv(w_dir + model + "/df_scores.csv")

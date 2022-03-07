@@ -33,6 +33,14 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
     cols_emg = cols_all[cols_all.str.startswith('emg_')].tolist()
     cols_demo = ['age', 'male']
 
+
+    ecg_col = ['ECG_meanNN','ECG_maxNN','ECG_minNN','ECG_rangeNN','ECG_SDNN','ECG_RMSSD','ECG_SDSD','ECG_NN50',
+       'ECG_NN20','ECG_pNN50','ECG_pNN20','ECG_medianNN','ECG_madNN','ECG_iqrNN','ECG_cvNN',
+       'ECG_cvSD','ECG_meanHR','ECG_maxHR', 'ECG_minHR', 'ECG_stdHR',
+       'ECG_SD1', 'ECG_SD2', 'ECG_S', 'ECG_SD1_SD2_ratio', 'ECG_CSI', 'ECG_CVI','ECG_total_power', 
+       'ECG_vlf', 'ECG_lf', 'ECG_lf_norm', 'ECG_hf', 'ECG_hf_norm', 'ECG_lf_hf_ratio']
+
+
     # Define predictors
     X_all = {
         'eeg': df[cols_eeg],
@@ -46,6 +54,8 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
         
         'eeg+eog+emg': df[cols_eeg + cols_eog + cols_emg],
         'eeg+eog+emg+demo': df[cols_eeg + cols_eog + cols_emg + cols_demo],
+
+        'eeg+eog+emg+ecg+demo': df[cols_eeg + cols_eog + cols_emg + ecg_col + cols_demo],
     }
 
     # Define target and groups
@@ -85,7 +95,7 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
         # joblib.dump(clf, fname_yasa, compress=True)
         
         # Features importance (full model only)
-        if name == "eeg+eog+emg+demo":
+        if name == "eeg+eog+emg+demo" or name == 'eeg+eog+emg+ecg+demo':
             # Export LGBM feature importance
             df_imp = pd.Series(clf.feature_importances_, index=clf.feature_name_, name='Importance').round()
             df_imp.sort_values(ascending=False, inplace=True)
