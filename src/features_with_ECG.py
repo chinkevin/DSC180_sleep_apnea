@@ -15,6 +15,12 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
     # # parent_dir = os.path.dirname(os.getcwd())
     # out_dir = '/output/features/'
 
+    col = ['ECG_meanNN','ECG_maxNN','ECG_minNN','ECG_rangeNN','ECG_SDNN','ECG_RMSSD','ECG_SDSD','ECG_NN50',
+       'ECG_NN20','ECG_pNN50','ECG_pNN20','ECG_medianNN','ECG_madNN','ECG_iqrNN','ECG_cvNN',
+       'ECG_cvSD','ECG_meanHR','ECG_maxHR', 'ECG_minHR', 'ECG_stdHR',
+       'ECG_SD1', 'ECG_SD2', 'ECG_S', 'ECG_SD1_SD2_ratio', 'ECG_CSI', 'ECG_CVI','ECG_total_power', 
+       'ECG_vlf', 'ECG_lf', 'ECG_lf_norm', 'ECG_hf', 'ECG_hf_norm', 'ECG_lf_hf_ratio']
+
     df_subj = pd.read_csv(data_dir)
     df_subj = df_subj.query("set == 'training'").set_index("subj")
 
@@ -45,9 +51,11 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
             raw.load_data()
         except:
             continue
+        _, times = raw[:] 
         
         # Resample and high-pass filter 
         raw.resample(sf, npad="auto")
+        ecg = raw.get_data()[0]
         
         # LOAD HYPNOGRAM
         hypno, sf_hyp = yasa.load_profusion_hypno(hypno_file)
@@ -82,23 +90,12 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
         df.append(features)
 
         # extract ECG features
-        # Read ECG data
-        # warnings.filterwarnings('ignore')
-        raw = mne.io.read_raw(eeg_file)
-        raw_data = raw.get_data()
-        # you can get the metadata included in the file and a list of all channels:
-        info = raw.info
-        channels = raw.ch_names
-
-        data, times = raw[:]  
-
-        sf = 256
-        heartbeat_times = sleepecg.detect_heartbeats(data[3], sf)/sf
+        heartbeat_times = sleepecg.detect_heartbeats(ecg, sf)/sf
         sleep_stage_duration = 30
-        record_duration = heartbeat_times[-1]
-        num_stages = record_duration // sleep_stage_duration
+        # record_duration = times[-1]
+        num_stages = features.shape[0]
         # check if ECG epoch number is the same with EEG epoch number
-        if features.shape[0] - num_stages > 1:
+        if (features.shape[0] - num_stages) != 0:
             print('Skip due to different numbers of epoch')
             continue
         stage_times = np.arange(num_stages) * sleep_stage_duration
@@ -110,37 +107,36 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
                 max_rri=max_rri,
             )
         rri_times = heartbeat_times[1:]
-        fs_rri_resample = 256
+        ##
+        fs_rri_resample = 100
         max_nans = 0.5
         feature_ids = []
 
-        td_feature = sleepecg.feature_extraction._hrv_timedomain_features(rri,
-                            rri_times,stage_times,lookback,lookforward,)
-        fd_feature = sleepecg.feature_extraction._hrv_frequencydomain_features(rri,rri_times,
-                    stage_times,lookback,lookforward,fs_rri_resample, max_nans, feature_ids)
     
-        col = ['ECG_meanNN','ECG_maxNN','ECG_minNN','ECG_rangeNN','ECG_SDNN','ECG_RMSSD','ECG_SDSD','ECG_NN50',
-       'ECG_NN20','ECG_pNN50','ECG_pNN20','ECG_medianNN','ECG_madNN','ECG_iqrNN','ECG_cvNN',
-       'ECG_cvSD','ECG_meanHR','ECG_maxHR', 'ECG_minHR', 'ECG_stdHR',
-       'ECG_SD1', 'ECG_SD2', 'ECG_S', 'ECG_SD1_SD2_ratio', 'ECG_CSI', 'ECG_CVI','ECG_total_power', 
-       'ECG_vlf', 'ECG_lf', 'ECG_lf_norm', 'ECG_hf', 'ECG_hf_norm', 'ECG_lf_hf_ratio']
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            td_feature = sleepecg.feature_extraction._hrv_timedomain_features(rri,
+                            rri_times,stage_times,lookback,lookforward,)
+            fd_feature = sleepecg.feature_extraction._hrv_frequencydomain_features(rri,rri_times,
+                        stage_times,lookback,lookforward,fs_rri_resample, max_nans, feature_ids)
+
         td_feat = pd.DataFrame(td_feature)
         fd_feat = pd.DataFrame(fd_feature)
         df_ecg = pd.concat([td_feat,fd_feat],axis = 1)
         df_ecg.columns = col
-        df1 = pd.DataFrame([[np.nan] * len(df_ecg.columns)], columns=df_ecg.columns)
-        df_ecg = df_ecg.append(df1, ignore_index=True)
         features.reset_index(inplace=True)
         temp = pd.concat([features, df_ecg], axis=1)
         temp.set_index(['subj','epoch'])
-    
-    
+
+
         df.append(temp)
 
-    df = pd.concat(df)
+    df = pd.concat(df).set_index(['subj','epoch'])
 
     # Convert to category
-    df['stage'] = df['stage'].astype('str')
+    df['stage'] = df['stage'].astype('category')
+    df = df[df['stage'].isin(['N1', 'N2', 'N3', 'R', 'W'])]
+    df.stage = df.stage.cat.remove_categories(9)
     # Export
     os.makedirs(out_dir, exist_ok = True)
     df.to_parquet(out_dir + "features_nsrr_shhs2.parquet")
