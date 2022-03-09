@@ -20,7 +20,7 @@ def predict(data_dir, eeg_dir, hypno_dir, out_dir, include):
 	df = []
 	# include = ['EEG', 'EOG(L)', 'EMG']
 	sf = 100
-	models = ["eeg+eog+emg+ecg+demo"]#["eeg", "eeg+eog", "eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]
+	models = ["eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]#["eeg", "eeg+eog", "eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]
 
 	for sub in df_subj.index:
 	    eeg_file = eeg_dir + 'shhs2-' + str(sub) + '.edf'
@@ -176,5 +176,5 @@ def predict(data_dir, eeg_dir, hypno_dir, out_dir, include):
 
 	# Export to parquet, separately for each model
 	for model in models:
-	    if not os.path.isdir(out_dir): os.mkdir(out_dir) 
-	    df[df['model'] == model].to_parquet(out_dir + "/cv_loo_nsrr_shhs.parquet", index=False)
+	    if not os.path.isdir(out_dir + f"/{model}"): os.mkdir(out_dir + f"/{model}") 
+	    df[df['model'] == model].to_parquet(out_dir + f"/{model}" + "/cv_loo_nsrr_shhs.parquet", index=False)

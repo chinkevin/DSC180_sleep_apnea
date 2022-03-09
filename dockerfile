@@ -26,7 +26,7 @@ USER jovyan
 
 # RUN conda install -y scikit-learn
 
-RUN pip install --no-cache-dir numpy pandas mne yasa lightgbm
+RUN pip install --no-cache-dir numpy pandas mne yasa lightgbm sleepecg seaborn matplotlib
 
 # Override command to disable running jupyter notebook at launch
 # CMD ["/bin/bash"]
