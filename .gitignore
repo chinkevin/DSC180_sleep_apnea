@@ -1,5 +1,7 @@
 data
-output
+output/cv
+output/demographics
+output/features
 notebooks/data
 notebooks/output
 
