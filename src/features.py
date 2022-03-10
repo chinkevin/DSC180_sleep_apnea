@@ -1,3 +1,6 @@
+"""
+Based On: https://github.com/raphaelvallat/yasa_classifier/blob/master/feature_extraction/01_features_nsrr_shhs.ipynb
+"""
 import os
 import warnings
 import numpy as np
@@ -7,11 +10,6 @@ import yasa
 from preprocessing import crop_hypno, extract_features
 
 def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
-    # Define paths (can be defined in config files)
-    # eeg_dir = 'data/edfs/shhs2/'
-    # hypno_dir = 'data/annotations-events-profusion/shhs2/'
-    # # parent_dir = os.path.dirname(os.getcwd())
-    # out_dir = '/output/features/'
 
     df_subj = pd.read_csv(data_dir)
     df_subj = df_subj.query("set == 'training'").set_index("subj")
@@ -49,9 +47,6 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
         
         # LOAD HYPNOGRAM
         hypno, sf_hyp = yasa.load_profusion_hypno(hypno_file)
-        # (Optional) We keep up to 15 minutes before / after sleep
-        # hypno, tmin, tmax = crop_hypno(hypno)
-        # raw.crop(tmin, tmax)
         # Check that hypno and data have the same number of epochs
         n_epochs = hypno.shape[0]
         if n_epochs != np.floor(raw.n_times / sf / 30):
@@ -63,16 +58,6 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
         df_hypno.replace({0: 'W', 1: 'N1', 2: 'N2', 3: 'N3', 4: 'R'}, inplace=True)
         stage_min = df_hypno.value_counts(sort=False) / 2
 
-        # INCLUSION CRITERIA (DISABLED)
-        # Hypnogram must include all stages
-    #     if np.unique(hypno).tolist() != [0, 1, 2, 3, 4]:
-    #         print("- Not all stages are present.")
-    #         continue
-    #     # If the duration is not between 4 to 12 hours, skip subject
-    #     if not(4 < n_epochs / 120 < 12):
-    #         print("- Recording too short/long.")
-    #         continue
-
         # EXTRACT FEATURES
         features = extract_features(df_subj, sub, raw, include)
         # Add hypnogram
@@ -81,7 +66,7 @@ def build_features(data_dir, eeg_dir, hypno_dir, out_dir, include):
 
     df = pd.concat(df)
 
-    # Convert to category
+    # Convert to string
     df['stage'] = df['stage'].astype('str')
     # Export
     os.makedirs(out_dir, exist_ok = True)

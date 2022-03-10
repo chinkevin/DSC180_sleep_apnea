@@ -1,20 +1,22 @@
+"""
+Based On: https://github.com/raphaelvallat/yasa_classifier/blob/master/04_validation_nsrr.ipynb
+"""
 import os
 import glob
 import numpy as np
 import pandas as pd
+import yasa
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm.notebook import tqdm
 import sklearn.metrics as skm
 from helper_functions import NUM2STR, STR2NUM
 from helper_functions import mean_std, median_iqr, perc_transition
+from mne.io import read_raw_edf
 
 def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir, dic_features, feat_fp, ecg_feat_fp, ecg_col):
 
-    # Choose model (set in config) -------------------
     models = ["eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]
-    # model = "eeg+eog+emg+ecg+demo"
-    # model = "eeg+eog+emg+demo"
 
     for model in models:
 
@@ -108,7 +110,6 @@ def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir, dic_features, feat_fp
         plt.savefig(out_dir + f"{model}_f1_scores.png", dpi=300, bbox_inches="tight")
         
 
-
         # Feature Importance
         
         fimp = 'output/classifiers/clf_%s_lgb_gbdt.csv' % model
@@ -143,3 +144,5 @@ def validate(data_dir, eeg_dir, hypno_dir, out_dir, w_dir, dic_features, feat_fp
             sns.heatmap(df.corr(), cmap="RdBu")
             plt.savefig(out_dir + "feature_corr.png", dpi=300, bbox_inches="tight")
 
+        hypno, sf_hyp = yasa.load_profusion_hypno(hypno_file)
+        hypno_up = yasa.hypno_upsample_to_data(hypno, sf_hyp, raw)

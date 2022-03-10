@@ -1,3 +1,6 @@
+"""
+Based On: https://github.com/raphaelvallat/yasa_classifier/blob/master/predict/03_predict_nsrr_shhs.ipynb
+"""
 import os
 import yasa
 import numpy as np
@@ -6,21 +9,14 @@ from mne.io import read_raw_edf
 import warnings
 import sleepecg
 
-def predict(data_dir, eeg_dir, hypno_dir, out_dir, include):
+def predict(data_dir, eeg_dir, hypno_dir, out_dir, include, ecg_col):
 
 	df_subj = pd.read_csv(data_dir)
 	df_subj = df_subj.query("set == 'testing'").set_index("subj")
 
-	ecg_col = ['ECG_meanNN','ECG_maxNN','ECG_minNN','ECG_rangeNN','ECG_SDNN','ECG_RMSSD','ECG_SDSD','ECG_NN50',
-       'ECG_NN20','ECG_pNN50','ECG_pNN20','ECG_medianNN','ECG_madNN','ECG_iqrNN','ECG_cvNN',
-       'ECG_cvSD','ECG_meanHR','ECG_maxHR', 'ECG_minHR', 'ECG_stdHR',
-       'ECG_SD1', 'ECG_SD2', 'ECG_S', 'ECG_SD1_SD2_ratio', 'ECG_CSI', 'ECG_CVI','ECG_total_power', 
-       'ECG_vlf', 'ECG_lf', 'ECG_lf_norm', 'ECG_hf', 'ECG_hf_norm', 'ECG_lf_hf_ratio']
-
 	df = []
-	# include = ['EEG', 'EOG(L)', 'EMG']
 	sf = 100
-	models = ["eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]#["eeg", "eeg+eog", "eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]
+	models = ["eeg+eog+emg+demo", "eeg+eog+emg+ecg+demo"]
 
 	for sub in df_subj.index:
 	    eeg_file = eeg_dir + 'shhs2-' + str(sub) + '.edf'
@@ -82,6 +78,7 @@ def predict(data_dir, eeg_dir, hypno_dir, out_dir, include):
 	                          metadata=md)
 
 	        # Predict stages and probability
+
 	        if model == "eeg+eog+emg+ecg+demo":
 	        	# with ECG
 		        sls = yasa.SleepStaging(raw, **params)
@@ -109,11 +106,10 @@ def predict(data_dir, eeg_dir, hypno_dir, out_dir, include):
 		                max_rri=max_rri,
 		            )
 		        rri_times = heartbeat_times[1:]
-		        ##
+		        
 		        fs_rri_resample = 100
 		        max_nans = 0.5
 		        feature_ids = []
-
 		    
 		        with warnings.catch_warnings():
 		            warnings.simplefilter("ignore", category=RuntimeWarning)

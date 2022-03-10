@@ -6,7 +6,6 @@ import json
 
 sys.path.insert(0, 'src')
 
-# from eda import main_eda
 from data import data_setup
 from features import build_features
 from features_with_ECG import build_features_ecg
@@ -17,17 +16,7 @@ from validate import validate
 def main(targets):
     '''
     Runs the main project pipeline logic, given the targets.
-    targets must contain: 'data', 'analysis', 'model'. 
-    
-    `main` runs the targets in order of data=>analysis=>model.
     '''
-
-    # if 'eda' in targets:
-    #     with open('config/eda-params.json') as fh:
-    #         data_cfg = json.load(fh)
-
-    #     main_eda(**data_cfg)
-
 
     if 'data' in targets:
         with open('config/data-params.json') as fh:
@@ -42,7 +31,7 @@ def main(targets):
         build_features(**feats_cfg)
 
     if 'features_ecg' in targets:
-        with open('config/features-params.json') as fh: # switched back to features
+        with open('config/features-params.json') as fh:
             feats_cfg = json.load(fh)
 
         build_features_ecg(**feats_cfg)
@@ -64,21 +53,6 @@ def main(targets):
             validate_cfg = json.load(fh)
 
         validate(**validate_cfg)
-
-    #     # make the data target
-    #     model_build(feats, labels, **model_cfg)
-
-    # if 'test' in targets:
-    # 	with open('config/eda-params.json') as fh:
-    #         eda_cfg = json.load(fh)
-
-    #     	# make the data target
-    # 		# data = get_data(**test_cfg)
-    #     # move_data(**test_config)
-    # 	main_eda(**eda_cfg)
-    #     # convert_notebook(**eda_config)
-    #     # find_metrics(**tuning_config)
-    #     # create_launch_files(**generate_config)
 
     return
 
