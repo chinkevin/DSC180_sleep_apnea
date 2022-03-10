@@ -3,5 +3,10 @@
     "eeg_dir": "data/polysomnography/edfs/shhs2/",
     "hypno_dir": "data/polysomnography/annotations-events-profusion/shhs2/",
     "out_dir": "output/cv",
-    "include":["EEG", "EOG(L)", "EMG"]
+    "include":["EEG", "EOG(L)", "EMG"],
+    "ecg_col": ["ECG_meanNN","ECG_maxNN","ECG_minNN","ECG_rangeNN","ECG_SDNN","ECG_RMSSD","ECG_SDSD","ECG_NN50",
+        "ECG_NN20","ECG_pNN50","ECG_pNN20","ECG_medianNN","ECG_madNN","ECG_iqrNN","ECG_cvNN",
+        "ECG_cvSD","ECG_meanHR","ECG_maxHR", "ECG_minHR", "ECG_stdHR",
+        "ECG_SD1", "ECG_SD2", "ECG_S", "ECG_SD1_SD2_ratio", "ECG_CSI", "ECG_CVI","ECG_total_power", 
+        "ECG_vlf", "ECG_lf", "ECG_lf_norm", "ECG_hf", "ECG_hf_norm", "ECG_lf_hf_ratio"]
 }

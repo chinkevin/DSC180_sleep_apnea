@@ -1,10 +1,13 @@
+"""
+Based On: https://github.com/raphaelvallat/yasa_classifier/blob/master/02_train_export_classifier.ipynb
+"""
 import os
 import pandas as pd
 import joblib
 from lightgbm import LGBMClassifier
 
 
-def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
+def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include, ecg_col):
     # Define hyper-parameters (can add to config)
     params = dict(
         boosting_type='gbdt',
@@ -33,14 +36,6 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
     cols_emg = cols_all[cols_all.str.startswith('emg_')].tolist()
     cols_demo = ['age', 'male']
 
-
-    ecg_col = ['ECG_meanNN','ECG_maxNN','ECG_minNN','ECG_rangeNN','ECG_SDNN','ECG_RMSSD','ECG_SDSD','ECG_NN50',
-       'ECG_NN20','ECG_pNN50','ECG_pNN20','ECG_medianNN','ECG_madNN','ECG_iqrNN','ECG_cvNN',
-       'ECG_cvSD','ECG_meanHR','ECG_maxHR', 'ECG_minHR', 'ECG_stdHR',
-       'ECG_SD1', 'ECG_SD2', 'ECG_S', 'ECG_SD1_SD2_ratio', 'ECG_CSI', 'ECG_CVI','ECG_total_power', 
-       'ECG_vlf', 'ECG_lf', 'ECG_lf_norm', 'ECG_hf', 'ECG_hf_norm', 'ECG_lf_hf_ratio']
-
-
     # Define predictors
     X_all = {
         'eeg': df[cols_eeg],
@@ -63,7 +58,7 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
     subjects = df.index.get_level_values(0).to_numpy()
 
     # Export a full list of features
-    features = pd.Series(X_all['eeg+eog+emg+demo'].columns, name="Features")
+    features = pd.Series(X_all['eeg+eog+emg+ecg+demo'].columns, name="Features")
     features.to_csv("features.csv", index=False)
 
     # Parallel processing when building the trees.
@@ -82,19 +77,14 @@ def build_model(data_dir, eeg_dir, hypno_dir, out_dir, feat_fp, include):
         
         # Export trained classifier
         if params['class_weight'] is not None:
-            fname = out_dir + 'clf_%s_lgb_%s_%s.joblib' %         (name, params['boosting_type'], class_weight)
+            fname = out_dir + 'clf_%s_lgb_%s_%s.joblib' % (name, params['boosting_type'], class_weight)
         else:
-            fname = out_dir + 'clf_%s_lgb_%s.joblib' %         (name, params['boosting_type'])
+            fname = out_dir + 'clf_%s_lgb_%s.joblib' % (name, params['boosting_type'])
             
         # Export model
         joblib.dump(clf, fname, compress=True)
         
-        # Also save directly to YASA
-        # out_dir_yasa = "/Users/raphael/GitHub/yasa/yasa/classifiers/"
-        # fname_yasa = out_dir_yasa + 'clf_%s_lgb.joblib' % name
-        # joblib.dump(clf, fname_yasa, compress=True)
-        
-        # Features importance (full model only)
+        # Features importance (full models only)
         if name == "eeg+eog+emg+demo" or name == 'eeg+eog+emg+ecg+demo':
             # Export LGBM feature importance
             df_imp = pd.Series(clf.feature_importances_, index=clf.feature_name_, name='Importance').round()
