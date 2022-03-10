@@ -8,6 +8,8 @@ Sleep apnea is a sleep disorder where breathing starts and stops intermittenly. 
   - This fetches the data, then creates features (defined in
     `src/features.py`) and saves them in the location specified in
     `features-params.json`.
+* To include ECG features, run 'python run.py data features_ecg'
+  - This builds the same features as before with additional ECG features.
 * To build a model, from the project root dir, run `python run.py data
   features model`
   - This fetches the data, creates the features, then trains a lgbm classifier
